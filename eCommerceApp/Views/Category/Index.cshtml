@@ -1,0 +1,16 @@
+﻿@model IEnumerable<Category>
+@{
+    ViewData["Title"] = "Category Page";
+}
+
+@foreach(var category in Model)
+{
+    <a class="text-decoration-none text-black" asp-controller="Category" asp-action="Details" asp-route-id="@category.Id">
+        <div class="card mb-3">
+            <img class="card-img-top" src="/@category.Image" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">@category.Name</h5>
+            </div>
+        </div>
+    </a>
+}

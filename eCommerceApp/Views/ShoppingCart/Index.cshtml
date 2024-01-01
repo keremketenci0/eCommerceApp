@@ -1,0 +1,117 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using eCommerceApp.Areas.Identity.Data;
+@using eCommerceApp.Data.Services
+@using eCommerceApp.Data;
+@using Microsoft.EntityFrameworkCore;
+@inject IProductService ProductService
+@inject IShoppingCartService ShoppingCartService
+@inject UserManager<AppUser> userManager
+@inject AppDbContext appDbContext
+@model IEnumerable<ShoppingCart>
+@{
+    decimal totalProductPrice = 0;
+    decimal ShipmentPrice = 5;
+    decimal totalPrice = 0;
+    var userId = userManager.GetUserId(this.User);
+    var userShoppingCart = ShoppingCartService.GetShoppingCartIdByUserId(userId);
+
+    var shoppingCart = await appDbContext.ShoppingCarts
+    .Where(item => item.AppUserId == userId)
+    .ToListAsync();
+
+    var cartItems = await appDbContext.CartItems
+    .Where(item => item.ShoppingCartId == userShoppingCart)
+    .ToListAsync();
+}
+
+<style>
+    .cart-img {
+        height: 150px;
+        max-width: 100px;
+        object-fit: cover;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table">
+                <thead>
+                    <tr class="text-left">
+                        <th class="text-center">ürün görsel</th>
+                        <th class="text-center">ürün satıcı</th>
+                        <th class="text-center">ürün isim</th>
+                        <th class="text-center">ürün fiyat</th>
+                        <th class="text-center">ürün adet</th>
+                        <th class="text-center">eylemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+
+
+                    @foreach (var item in shoppingCart)
+                    {
+                        foreach (var cartItem in cartItems)
+                        {
+                            var product = await ProductService.GetProductByIdAsync(cartItem.ProductId);
+
+                            if (product != null)
+                            {
+                                <tr>
+                                    <td class="text-center align-middle">
+                                        <a class="text-decoration-none text-black" asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">
+                                            <img class="cart-img" src="/@product.Image" />
+                                        </a>
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <a class="text-decoration-none text-black" asp-controller="Seller" asp-action="Details" asp-route-id="@product.Seller.Id">
+                                            @product.Seller.Name
+                                        </a>
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <a class="text-decoration-none text-black" asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">
+                                            @product.Name
+                                        </a>
+                                    </td>
+                                    <td class="text-center align-middle">@product.Price $</td>
+                                    <td class="text-center align-middle">@cartItem.Quantity</td>
+                                    <td class="text-center align-middle">
+                                        <a class="btn btn-sm bg-success text-light" asp-controller="ShoppingCart" asp-action="Increase" asp-route-id="@product.Id">+</a>
+                                        <a class="btn btn-sm bg-danger text-light" asp-controller="ShoppingCart" asp-action="DeleteItem" asp-route-id="@product.Id">
+                                            <img class="align-middle" src="/icon/trash_icon.png" style="width: 20px; height: 20px;">
+                                        </a>
+                                        <a class="btn btn-sm bg-secondary text-light" asp-controller="ShoppingCart" asp-action="Decrease" asp-route-id="@product.Id">-</a>
+                                    </td>
+
+                                </tr>
+                                totalProductPrice += (decimal)product.Price * cartItem.Quantity;
+                            }
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4 order-first order-md-last">
+            <div class="content">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Sipariş Özeti</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Ürünlerin Toplamı: @totalProductPrice $</li>
+                        <li class="list-group-item">Kargo Toplamı: @ShipmentPrice $</li>
+                        @{
+                            totalPrice += (decimal)totalProductPrice + (decimal)ShipmentPrice;
+                        }
+                        <li class="list-group-item">Toplam: @totalPrice $</li>
+                    </ul>
+                    <div class="card-body">
+                        <a class="text-decoration-none text-black" asp-controller="ShoppingCart" asp-action="EmptyShoppingCart" asp-route-id="userId">Sepeti Onayla</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

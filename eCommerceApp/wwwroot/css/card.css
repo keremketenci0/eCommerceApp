@@ -1,0 +1,16 @@
+﻿.card-img-top {
+    height: 400px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 30px;
+}
+
+.price span {
+    font-weight: bold;
+}
+
+.add-to-cart-btn {
+    align-self: flex-end; /* Butonu sağ tarafa yapıştırma */
+}

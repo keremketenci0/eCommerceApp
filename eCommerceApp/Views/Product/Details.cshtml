@@ -1,0 +1,104 @@
+﻿@model Product
+@{
+    ViewData["Title"] = "Product Detail Page";
+}
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-lg-6">
+            <!-- Ürün Resimleri Carousel (Bootstrap Carousel) -->
+            <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach (var productImage in Model.Image)
+                    {
+                        <div class="carousel-item active">
+                        <img src = "/@Model.Image" class="d-block w-100" alt="@Model.Image">
+                        </div>
+                    }  
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <!-- Ürün Detayları -->
+            <h2>@Model.Name <span class="badge bg-success">Stokta Var</span></h2>
+            <p class="price">$ @Model.Price</p>
+
+            <a class="btn bg-success text-light" asp-controller="ShoppingCart" asp-action="AddToCart" asp-route-id="@Model.Id">sepete ekle</a>
+
+            <p>
+                Miktar:
+                <select id="quantitySelect" class="form-select form-select-sm">
+                    <!-- Miktar Seçenekleri Ekleniyor -->
+                    <!-- Değerler 1'den 20'ye kadar -->
+                    <script>
+                        for (var i = 1; i <= 20; i++) {
+                            document.write('<option value="' + i + '">' + i + '</option>');
+                        }
+                    </script>
+                </select>
+                <button onclick="changeQuantity(1)" class="btn btn-secondary">+</button>
+                <button onclick="changeQuantity(-1)" class="btn btn-secondary">-</button>
+            </p>
+
+            <!-- Güvenlik ve İade Politikası İkonları -->
+            <div class="d-flex align-items-center">
+                <img src="/icon/secure-icon.png" alt="Güvenli İşlem İkonu" class="me-2">
+                <p class="m-0">Güvenli İşlem</p>
+                <img src="/icon/return-icon.png" alt="İade Politikası İkonu" class="ms-3 me-2">
+                <p class="m-0">İade Politikası</p>
+            </div>
+            <p class="description mt-1">
+                    @* @Model.Description *@</p>
+            <!-- Satıcı Bilgisi -->
+            <a asp-controller="Seller" asp-action="Details" asp-route-id="@Model.Seller.Id">
+                <p class="seller">Satıcı: @Model.Seller.Name</p>
+            </a>
+            
+            <p class="shipping">Kargo Ücreti: Ücretsiz</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function changeQuantity(change) {
+        var select = document.getElementById("quantitySelect");
+        var currentValue = parseInt(select.value);
+
+        // Değişim 1 ise ve mevcut değer 20'den küçükse ya da değişim -1 ise ve mevcut değer 1'den büyükse işlem yap
+        if ((change === 1 && currentValue < 20) || (change === -1 && currentValue > 1)) {
+            select.value = currentValue + change;
+        }
+    }
+
+
+    $('#addToCartButton').click(function () {
+        var productName = $(this).data('product-name');
+        var productPrice = $(this).data('product-price');
+
+        // Sepete ekleme işlemi burada yapılacak, örneğin AJAX kullanarak bir istek gönderilebilir
+
+        // Sidebar'ı güncelleme işlemi
+        $.ajax({
+            type: 'GET',
+            url: '/Cart/AddToCart', // Sepete eklemek için uygun URL'yi buraya yazmalısınız
+            data: { productName: productName, productPrice: productPrice },
+            success: function (response) {
+                // Sidebar içeriğini güncelleme işlemi
+                $('#rightSidebar .cart-item').html(response);
+            },
+            error: function (error) {
+                console.error('Sepete eklerken bir hata oluştu: ' + error);
+            }
+        });
+    });
+
+</script>

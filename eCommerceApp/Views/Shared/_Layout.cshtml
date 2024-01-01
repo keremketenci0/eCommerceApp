@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - eCommerceApp</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/eCommerceApp.styles.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="/css/card.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#leftSidebar" aria-controls="leftSidebar">
+                    Menu
+                </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Category" asp-action="Index">Categories</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Seller" asp-action="Index">Sellers</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Swagger" asp-action="Index">Admin</a>
+                            </li>
+                        }
+                    </ul>
+                    <ul class="navbar-nav float-right">
+                        @* <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">Cart</a>
+                        </li>
+                        <li class="nav-item">
+                            <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#rightSidebar" aria-controls="rightSidebar">
+                                Cart
+                            </button>
+                        </li> *@
+                        <li><partial name="_LoginPartial.cshtml" /></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        @* left-sidebar *@
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="leftSidebar" aria-labelledby="leftSidebarLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="leftSidebarLabel">Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="row justify-content-start w-50 rounded-2">
+                    <a class="btn text-start" asp-controller="Category" asp-action="Index">Category</a>
+                    <a class="btn text-start" asp-controller="Product" asp-action="Index">Product</a>
+                    <a class="btn text-start" asp-controller="Seller" asp-action="Index">Seller</a>
+                </div>
+                @* <div class="dropdown mt-3">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        Categories
+                    </button>
+                    <ul class="dropdown-menu">
+                        @foreach (var category in Model)
+                        {
+                            <li><a asp-controller="Category" asp-action="Details" asp-route-id="@category.Id">@category.Name</a></li>
+                        }
+                    </ul>
+                </div> *@
+            </div>
+        </div>
+
+        @* right-sidebar *@
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="rightSidebar" aria-labelledby="rightSidebarLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="rightSidebarLabel">Cart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="row justify-content-start w-50 rounded-2">
+                    <div class="cart-item">
+                        <ul></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - eCommerceApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script src="/js/Login.js"></script>
+    <script src="/js/Register.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
